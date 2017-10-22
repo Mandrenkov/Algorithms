@@ -59,7 +59,7 @@ std::string solve(const std::string &given) {
 	int size = lps[index];
 
 	// Convert the expanded index and size to match the original string.
-	int start = (index + 1)/2 - size/2
+	int start = (index + 1)/2 - size/2;
 	int length = std::max(1, size - 1);
 	return given.substr(start, length);
 }
