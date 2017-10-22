@@ -18,43 +18,45 @@ std::string solve(const std::string&);
 
 // Returns the longest palindromic substring of |given|.
 std::string solve(const std::string &given) {
-	// Expand the given string to include all palindrome indexes.
+	// Expand |given| to represent all palindrome indices.
 	std::string pad = expand(given);
-	// Declare the LPS array to store the longest palindromic substring values.
+	// Declare an array to store the size of the longest palindromic substring
+	// at each index of |pad|.
 	std::vector<int> lps(pad.size(), 1);
 
 	// The center of the active palindrome.
 	int c = 0;
-	// The rightmost index of the active palindrome;
+	// The rightmost index of the active palindrome.
 	int r = 0;
 	for (int i = 0; i < pad.size(); ++i) {
 		// The center index of the mirror palindrome.
 		int j = 2*c - i;
-		// If |i| is past |r|, no information can be recycled.
+		// If |i| is past |r|, no previous LPS entries can be reused.
 		if (i < r) {
-			lps[i] = std::min(r - i, lps[j]);
+			lps[i] = std::min(r - i + 1, lps[j]);
 		}
 
 		// Check if the current palindrome extends beyond the active palindrome.
-		int l = lps[i];
-		while (i - l >= 0 && i + l < pad.size() && pad[i - l] == pad[i + l]) {
+		int length = lps[i];
+		while (i - length >= 0 && i + length < pad.size() && pad[i - length] == pad[i + length]) {
 			++lps[i];
-			++l;
+			++length;
 		}
 
-		// Update the active palindrome if the current palindrome reaches further right.
-		if (i + lps[i] - 1 > r) {
+		// Update the active palindrome if the current palindrome reaches further to the right.
+		int i_r = i + lps[i] - 1;
+		if (i_r > r) {
 			c = i;
-			r = i + lps[i] - 1;
+			r = i_r;
 		}
 	}
 
-	// Extract the longest palindrome.
+	// Extract the index and size of the longest palindromic substring.
 	auto it = std::max_element(lps.begin(), lps.end());
 	int index = std::distance(lps.begin(), it);
 	int size = lps[index];
 
-	// Convert the expanded index and length to match the original string.
+	// Convert the expanded index and size to match the original string.
 	int start = (index + 1)/2 - size/2;
 	int length = std::max(1, size - 1);
 	return given.substr(start, length);
@@ -74,6 +76,7 @@ std::string expand(const std::string &given) {
 int main() {
 	// Declare some sanity-check tests.
 	std::vector<std::pair<const std::string, const std::string>> tests = {
+		{"", ""},
 		{"a", "a"},
 		{"aba", "aba"},
 		{"xabbab", "abba"},
