@@ -29,11 +29,13 @@ std::string solve(const std::string &given) {
 	// The rightmost index of the active palindrome.
 	int r = 0;
 	for (int i = 0; i < pad.size(); ++i) {
-		// The center index of the mirror palindrome.
-		int j = 2*c - i;
 		// If |i| is past |r|, no previous LPS entries can be reused.
 		if (i < r) {
-			lps[i] = std::min(r - i + 1, lps[j]);
+			// Calculate the center index of the mirror palindrome.
+			int j = 2*c - i;
+			// Calculate the remaining distance in the active palindrome.
+			int remaining = r - i + 1;
+			lps[i] = std::min(remaining, lps[j]);
 		}
 
 		// Check if the current palindrome extends beyond the active palindrome.
@@ -57,7 +59,7 @@ std::string solve(const std::string &given) {
 	int size = lps[index];
 
 	// Convert the expanded index and size to match the original string.
-	int start = (index + 1)/2 - size/2;
+	int start = (index + 1)/2 - size/2
 	int length = std::max(1, size - 1);
 	return given.substr(start, length);
 }
